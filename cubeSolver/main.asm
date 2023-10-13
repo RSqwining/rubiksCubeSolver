@@ -152,6 +152,7 @@ turnClock PROC
 	yC:
 	mov esi, OFFSET sides + 9 * b; set esi to point to the 1st element in blue array
 	mov edi, OFFSET sides + 9 * r; set edi to point to the 1st element in red array
+	jmp ywC
 
 	wC:
 	mov esi, OFFSET sides + 9 * b + 6; set esi to point to the 7th element in blue array
