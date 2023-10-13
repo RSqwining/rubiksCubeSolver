@@ -28,7 +28,7 @@ sides byte 9 DUP(w); white opposes yellow
 main PROC
 	;call initCube either shuffle solved cube or generate solvable cube
 	
-	mov esi, OFFSET sides + 9 * b
+	mov esi, OFFSET sides + 9 * g
 	call turnClock
 
 	call displayCube
@@ -193,17 +193,11 @@ turnClock PROC
 	cmp al, g
 	je gC
 
-	cmp al, o
-	je oC
-	cmp al, r
-	je rC
-
-
 	bC:
-	mov ecx, 3
 	mov esi, OFFSET sides + 9 * r; use pointer for orange / red
 	mov edi, OFFSET sides + 6; use pointer for white/yellow
-	coolLabel:
+	mov ecx, 3
+	bmvSqr:
 	mov  al, [esi]
 	mov  bl, [edi]
 	mov [edi], al
@@ -214,11 +208,32 @@ turnClock PROC
 	mov [esi], bl
 	add esi, 3
 	inc edi
-	loop coolLabel
+	loop bmvSqr
 	jmp aCC; jump after check center
 
 	gC:
-	jmp aCC; jump after check center
+	mov esi, OFFSET sides + 9 * r + 2; use pointer for orange / red
+	mov edi, OFFSET sides; use pointer for white/yellow
+	mov ecx, 3
+	gmvSqr:
+	mov  al, [esi]
+	mov  bl, [edi]
+	mov [edi], al
+	mov al, [esi + 9 * (o-r) - 2]
+	mov [esi + 9 * (o-r) - 2], bl
+	mov bl, [edi + 9 * (y-w)]
+	mov [edi + 9 * (y-w)], al
+	mov [esi], bl
+	add esi, 3
+	inc edi
+	loop gmvSqr
+	jne aCC; jump after check center
+ 
+
+	cmp al, o
+	je oC
+	cmp al, r
+	je rC
 
 	oC:
 	jmp aCC; jump after check center
