@@ -42,7 +42,7 @@ initCube ENDP
 
 displayCube proc
 
-	mov esi, OFFSET sides
+	mov esi, OFFSET sides + 9 * y
 	call printSide
 	mov ecx, 4
 	mov esi, OFFSET sides + 9 * b
@@ -52,7 +52,7 @@ displayCube proc
 		call crlf
 		add esi, 9
 	loop printSides
-	mov esi, OFFSET sides + 9 * y
+	mov esi, OFFSET sides
 	call printSide
 
 ret
