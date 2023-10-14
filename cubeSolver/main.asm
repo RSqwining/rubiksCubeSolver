@@ -120,6 +120,44 @@ printSide PROC
 	ret
 printSide ENDP
 
+turnW PROC
+mov esi, OFFSET sides
+call turnClock
+ret
+turnW ENDP
+
+turnY PROC
+mov esi, OFFSET sides + 9*y
+call turnClock
+ret
+turnY ENDP
+
+turnB PROC
+mov esi, OFFSET sides + 9*b
+call turnClock
+ret
+turnB ENDP
+
+turnR PROC
+mov esi, OFFSET sides + 9*r
+call turnClock
+ret
+turnR ENDP
+
+turnG PROC
+mov esi, OFFSET sides + 9*g
+call turnClock
+ret
+turnG ENDP
+
+turnO PROC
+mov esi, OFFSET sides + 9*o
+call turnClock
+ret
+turnO ENDP
+
+
+
 ;clockwise turn 
 turnClock PROC
 	push esi
