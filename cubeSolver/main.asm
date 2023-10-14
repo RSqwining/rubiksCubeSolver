@@ -276,9 +276,76 @@ turnClock PROC
 	je rC
 
 	oC:
+	mov esi, OFFSET sides + 9*y;move first square
+	mov edi, OFFSET sides + 9*b
+	mov al, [esi]
+	mov bl, [edi]
+	mov [edi], al
+	mov al, [OFFSET sides + 6]
+	mov [OFFSET sides + 6], bl
+	mov bl, [OFFSET sides + 9*g + 8]
+	mov [OFFSET sides + 9*g + 8], al
+	mov [esi], bl
+
+	add esi, 3
+	add edi, 3
+	mov al, [esi]
+	mov bl, [edi]
+	mov [edi], al
+	mov al, [OFFSET sides + 3]
+	mov [OFFSET sides + 3], bl
+	mov bl, [OFFSET sides + 9*g + 5]
+	mov [OFFSET sides + 9*g + 5], al
+	mov [esi], bl
+
+	add esi, 3
+	add edi, 3
+	mov al, [esi]
+	mov bl, [edi]
+	mov [edi], al
+	mov al, [OFFSET sides]
+	mov [OFFSET sides], bl
+	mov bl, [OFFSET sides + 9*g + 2]
+	mov [OFFSET sides + 9*g + 2], al
+	mov [esi], bl
+
+
+
 	jmp aCC; jump after check center
 
 	rC:
+	mov esi, OFFSET sides + 9*y + 2;move first square
+	mov edi, OFFSET sides + 9*g + 6
+	mov al, [esi]
+	mov bl, [edi]
+	mov [edi], al
+	mov al, [OFFSET sides + 8]
+	mov [OFFSET sides + 8], bl
+	mov bl, [OFFSET sides + 9*b + 2]
+	mov [OFFSET sides + 9*b + 2], al
+	mov [esi], bl
+
+	add esi, 3
+	sub edi, 3
+	mov al, [esi]
+	mov bl, [edi]
+	mov [edi], al
+	mov al, [OFFSET sides + 5]
+	mov [OFFSET sides + 5], bl
+	mov bl, [OFFSET sides + 9*b + 5]
+	mov [OFFSET sides + 9*b + 5], al
+	mov [esi], bl
+
+	add esi, 3
+	sub edi, 3
+	mov al, [esi]
+	mov bl, [edi]
+	mov [edi], al
+	mov al, [OFFSET sides + 2]
+	mov [OFFSET sides + 2], bl
+	mov bl, [OFFSET sides + 9*b + 8]
+	mov [OFFSET sides + 9*b + 8], al
+	mov [esi], bl
 	jmp aCC; jump after check center
 
 	aCC:
