@@ -28,8 +28,7 @@ sides byte 9 DUP(w); white opposes yellow
 main PROC
 	;call initCube either shuffle solved cube or generate solvable cube
 	
-	mov esi, OFFSET sides + 9 * g
-	call turnClock
+	call turnO
 
 	call displayCube
 	
@@ -120,44 +119,6 @@ printSide PROC
 	ret
 printSide ENDP
 
-turnW PROC
-mov esi, OFFSET sides
-call turnClock
-ret
-turnW ENDP
-
-turnY PROC
-mov esi, OFFSET sides + 9*y
-call turnClock
-ret
-turnY ENDP
-
-turnB PROC
-mov esi, OFFSET sides + 9*b
-call turnClock
-ret
-turnB ENDP
-
-turnR PROC
-mov esi, OFFSET sides + 9*r
-call turnClock
-ret
-turnR ENDP
-
-turnG PROC
-mov esi, OFFSET sides + 9*g
-call turnClock
-ret
-turnG ENDP
-
-turnO PROC
-mov esi, OFFSET sides + 9*o
-call turnClock
-ret
-turnO ENDP
-
-
-
 ;clockwise turn 
 turnClock PROC
 	push esi
@@ -183,43 +144,40 @@ turnClock PROC
 	mov al, [esi + 5]
 	pop esi
 	ret
-
+	
 turnClock ENDP
 
 turnW PROC
 mov esi, OFFSET sides
 call turnClock
 
-	wC:
-	mov esi, OFFSET sides + 9 * b + 6; set esi to point to the 7th element in blue array
-	mov edi, OFFSET sides + 9 * r + 6; set edi to point to the 7th element in red array
-	jmp ywC
+mov esi, OFFSET sides + 9 * b + 6; set esi to point to the 7th element in blue array
+mov edi, OFFSET sides + 9 * r + 6; set edi to point to the 7th element in red array
 
-	ywC:
-	mov ecx, 3;
-	push esi
-	push edi
-	wSwap:
-	push edi
+mov ecx, 3;
+push esi
+push edi
+wSwap:
+push edi
 	
-	mov al, [esi]; swap the elements for blue, red, green, and orange
-	mov bl, [edi]
-	mov [edi], al
-	add edi, 9
-	mov al, [edi]
-	mov [edi], bl
-	add edi, 9
-	mov bl, [edi]
-	mov [edi], al
-	add edi, 9
-	mov [esi], bl
+mov al, [esi]; swap the elements for blue, red, green, and orange
+mov bl, [edi]
+mov [edi], al
+add edi, 9
+mov al, [edi]
+mov [edi], bl
+add edi, 9
+mov bl, [edi]
+mov [edi], al
+add edi, 9
+mov [esi], bl
 	
-	inc esi
-	pop edi
-	inc edi
-	loop wSwap
-	pop esi
-	pop edi
+inc esi
+pop edi
+inc edi
+loop wSwap
+pop esi
+pop edi
 ret
 turnW ENDP
 
@@ -234,7 +192,7 @@ push esi
 push edi
 wSwap:
 push edi
-
+	
 mov al, [esi]; swap the elements for blue, red, green, and orange
 mov bl, [edi]
 mov [edi], al
@@ -246,7 +204,7 @@ mov bl, [edi]
 mov [edi], al
 add edi, 9
 mov [esi], bl
-
+	
 inc esi
 pop edi
 inc edi
@@ -260,21 +218,21 @@ turnB PROC
 mov esi, OFFSET sides + 9*b
 call turnClock
 
-	mov esi, OFFSET sides + 9 * r; use pointer for orange / red
-	mov edi, OFFSET sides + 6; use pointer for white/yellow
-	mov ecx, 3
-	bmvSqr:
-	mov  al, [esi]
-	mov  bl, [edi]
-	mov [edi], al
-	mov al, [esi + 9 * (o-r) + 2]
-	mov [esi + 9 * (o-r) + 2], bl
-	mov bl, [edi + 9 * (y-w)]
-	mov [edi + 9 * (y-w)], al
-	mov [esi], bl
-	add esi, 3
-	inc edi
-	loop bmvSqr
+mov esi, OFFSET sides + 9 * r; use pointer for orange / red
+mov edi, OFFSET sides + 6; use pointer for white/yellow
+mov ecx, 3
+bmvSqr:
+mov  al, [esi]
+mov  bl, [edi]
+mov [edi], al
+mov al, [esi + 9 * (o-r) + 2]
+mov [esi + 9 * (o-r) + 2], bl
+mov bl, [edi + 9 * (y-w)]
+mov [edi + 9 * (y-w)], al
+mov [esi], bl
+add esi, 3
+inc edi
+loop bmvSqr
 ret
 turnB ENDP
 
@@ -323,106 +281,60 @@ call turnClock
 
 mov esi, OFFSET sides + 9 * r + 2
 mov edi, OFFSET sides
-	mov ecx, 3
-	gmvSqr:
-	mov  al, [esi]
-	mov  bl, [edi]
-	mov [edi], al
-	mov al, [esi + 9 * (o-r) - 2]
-	mov [esi + 9 * (o-r) - 2], bl
-	mov bl, [edi + 9 * (y-w)]
-	mov [edi + 9 * (y-w)], al
-	mov [esi], bl
-	add esi, 3
-	inc edi
-	loop gmvSqr
+mov ecx, 3
+gmvSqr:
+mov  al, [esi]
+mov  bl, [edi]
+mov [edi], al
+mov al, [esi + 9 * (o-r) - 2]
+mov [esi + 9 * (o-r) - 2], bl
+mov bl, [edi + 9 * (y-w)]
+mov [edi + 9 * (y-w)], al
+mov [esi], bl
+add esi, 3
+inc edi
+loop gmvSqr
 ret
 turnG ENDP
- 
+
 turnO PROC
 mov esi, OFFSET sides + 9*o
 call turnClock
 
-	oC:
-	mov esi, OFFSET sides + 9*y;move first square
-	mov edi, OFFSET sides + 9*b
-	mov al, [esi]
-	mov bl, [edi]
-	mov [edi], al
-	mov al, [OFFSET sides + 6]
-	mov [OFFSET sides + 6], bl
-	mov bl, [OFFSET sides + 9*g + 8]
-	mov [OFFSET sides + 9*g + 8], al
-	mov [esi], bl
+mov esi, OFFSET sides + 9*y;move first square
+mov edi, OFFSET sides + 9*b
+mov al, [esi]
+mov bl, [edi]
+mov [edi], al
+mov al, [OFFSET sides + 6]
+mov [OFFSET sides + 6], bl
+mov bl, [OFFSET sides + 9*g + 8]
+mov [OFFSET sides + 9*g + 8], al
+mov [esi], bl
 
-	add esi, 3
-	add edi, 3
-	mov al, [esi]
-	mov bl, [edi]
-	mov [edi], al
-	mov al, [OFFSET sides + 3]
-	mov [OFFSET sides + 3], bl
-	mov bl, [OFFSET sides + 9*g + 5]
-	mov [OFFSET sides + 9*g + 5], al
-	mov [esi], bl
+add esi, 3
+add edi, 3
+mov al, [esi]
+mov bl, [edi]
+mov [edi], al
+mov al, [OFFSET sides + 3]
+mov [OFFSET sides + 3], bl
+mov bl, [OFFSET sides + 9*g + 5]
+mov [OFFSET sides + 9*g + 5], al
+mov [esi], bl
 
-	add esi, 3
-	add edi, 3
-	mov al, [esi]
-	mov bl, [edi]
-	mov [edi], al
-	mov al, [OFFSET sides]
-	mov [OFFSET sides], bl
-	mov bl, [OFFSET sides + 9*g + 2]
-	mov [OFFSET sides + 9*g + 2], al
-	mov [esi], bl
+add esi, 3
+add edi, 3
+mov al, [esi]
+mov bl, [edi]
+mov [edi], al
+mov al, [OFFSET sides]
+mov [OFFSET sides], bl
+mov bl, [OFFSET sides + 9*g + 2]
+mov [OFFSET sides + 9*g + 2], al
+mov [esi], bl
 
-
-
-	jmp aCC; jump after check center
-
-	rC:
-	mov esi, OFFSET sides + 9*y + 2;move first square
-	mov edi, OFFSET sides + 9*g + 6
-	mov al, [esi]
-	mov bl, [edi]
-	mov [edi], al
-	mov al, [OFFSET sides + 8]
-	mov [OFFSET sides + 8], bl
-	mov bl, [OFFSET sides + 9*b + 2]
-	mov [OFFSET sides + 9*b + 2], al
-	mov [esi], bl
-
-	add esi, 3
-	sub edi, 3
-	mov al, [esi]
-	mov bl, [edi]
-	mov [edi], al
-	mov al, [OFFSET sides + 5]
-	mov [OFFSET sides + 5], bl
-	mov bl, [OFFSET sides + 9*b + 5]
-	mov [OFFSET sides + 9*b + 5], al
-	mov [esi], bl
-
-	add esi, 3
-	sub edi, 3
-	mov al, [esi]
-	mov bl, [edi]
-	mov [edi], al
-	mov al, [OFFSET sides + 2]
-	mov [OFFSET sides + 2], bl
-	mov bl, [OFFSET sides + 9*b + 8]
-	mov [OFFSET sides + 9*b + 8], al
-	mov [esi], bl
-	jmp aCC; jump after check center
-
-	aCC:
-
-
-
-	
-	pop esi
-	ret
+ret
 turnO ENDP
 
 ; determine colors on side of desired color, turn both of those
