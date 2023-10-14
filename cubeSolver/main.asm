@@ -226,10 +226,12 @@ turnClock PROC
 
 
 	nwy:
-	cmp al, b
-	je bC
+
 	cmp al, g
 	je gC
+
+	cmp al, b
+	jne nbg
 
 	bC:
 	mov esi, OFFSET sides + 9 * r; use pointer for orange / red
@@ -267,7 +269,7 @@ turnClock PROC
 	loop gmvSqr
 	jne aCC; jump after check center
  
-
+	nbg:
 	cmp al, o
 	je oC
 	cmp al, r
