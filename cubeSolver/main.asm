@@ -181,16 +181,14 @@ turnClock PROC
 	mov [esi+1], bl
 
 	mov al, [esi + 5]
+	pop esi
+	ret
 
-	cmp al, w; check the color of the center and set al to the opposing color value, white and yellow are similar to handle
-	je wC
-	cmp al, y
-	jne nwy; no white yellow
+turnClock ENDP
 
-	yC:
-	mov esi, OFFSET sides + 9 * b; set esi to point to the 1st element in blue array
-	mov edi, OFFSET sides + 9 * r; set edi to point to the 1st element in red array
-	jmp ywC
+turnW PROC
+mov esi, OFFSET sides
+call turnClock
 
 	wC:
 	mov esi, OFFSET sides + 9 * b + 6; set esi to point to the 7th element in blue array
@@ -222,18 +220,46 @@ turnClock PROC
 	loop wSwap
 	pop esi
 	pop edi
-	jmp aCC; jump after check center
+ret
+turnW ENDP
 
+turnY PROC
+mov esi, OFFSET sides + 9*y
+call turnClock
 
-	nwy:
+mov esi, OFFSET sides + 9 * b; set esi to point to the 1st element in blue array
+mov edi, OFFSET sides + 9 * r; set edi to point to the 1st element in red array
+mov ecx, 3;
+push esi
+push edi
+wSwap:
+push edi
 
-	cmp al, g
-	je gC
+mov al, [esi]; swap the elements for blue, red, green, and orange
+mov bl, [edi]
+mov [edi], al
+add edi, 9
+mov al, [edi]
+mov [edi], bl
+add edi, 9
+mov bl, [edi]
+mov [edi], al
+add edi, 9
+mov [esi], bl
 
-	cmp al, b
-	jne nbg
+inc esi
+pop edi
+inc edi
+loop wSwap
+pop esi
+pop edi
+ret
+turnY ENDP
 
-	bC:
+turnB PROC
+mov esi, OFFSET sides + 9*b
+call turnClock
+
 	mov esi, OFFSET sides + 9 * r; use pointer for orange / red
 	mov edi, OFFSET sides + 6; use pointer for white/yellow
 	mov ecx, 3
@@ -249,11 +275,54 @@ turnClock PROC
 	add esi, 3
 	inc edi
 	loop bmvSqr
-	jmp aCC; jump after check center
+ret
+turnB ENDP
 
-	gC:
-	mov esi, OFFSET sides + 9 * r + 2; use pointer for orange / red
-	mov edi, OFFSET sides; use pointer for white/yellow
+turnR PROC
+mov esi, OFFSET sides + 9*r
+call turnClock
+
+mov esi, OFFSET sides + 9*y + 2;move first square
+mov edi, OFFSET sides + 9*g + 6
+mov al, [esi]
+mov bl, [edi]
+mov [edi], al
+mov al, [OFFSET sides + 8]
+mov [OFFSET sides + 8], bl
+mov bl, [OFFSET sides + 9*b + 2]
+mov [OFFSET sides + 9*b + 2], al
+mov [esi], bl
+
+add esi, 3
+sub edi, 3
+mov al, [esi]
+mov bl, [edi]
+mov [edi], al
+mov al, [OFFSET sides + 5]
+mov [OFFSET sides + 5], bl
+mov bl, [OFFSET sides + 9*b + 5]
+mov [OFFSET sides + 9*b + 5], al
+mov [esi], bl
+
+add esi, 3
+sub edi, 3
+mov al, [esi]
+mov bl, [edi]
+mov [edi], al
+mov al, [OFFSET sides + 2]
+mov [OFFSET sides + 2], bl
+mov bl, [OFFSET sides + 9*b + 8]
+mov [OFFSET sides + 9*b + 8], al
+mov [esi], bl
+ret
+turnR ENDP
+
+turnG PROC
+mov esi, OFFSET sides + 9*g
+call turnClock
+
+mov esi, OFFSET sides + 9 * r + 2
+mov edi, OFFSET sides
 	mov ecx, 3
 	gmvSqr:
 	mov  al, [esi]
@@ -267,13 +336,12 @@ turnClock PROC
 	add esi, 3
 	inc edi
 	loop gmvSqr
-	jne aCC; jump after check center
+ret
+turnG ENDP
  
-	nbg:
-	cmp al, o
-	je oC
-	cmp al, r
-	je rC
+turnO PROC
+mov esi, OFFSET sides + 9*o
+call turnClock
 
 	oC:
 	mov esi, OFFSET sides + 9*y;move first square
@@ -355,8 +423,7 @@ turnClock PROC
 	
 	pop esi
 	ret
-	
-turnClock ENDP
+turnO ENDP
 
 ; determine colors on side of desired color, turn both of those
 turnMiddle PROC
