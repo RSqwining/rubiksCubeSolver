@@ -40,7 +40,8 @@ initCube proc
 initCube ENDP
 
 displayCube proc
-
+	push esi
+	push ecx
 	mov esi, OFFSET sides + 9 * y
 	call printSide
 	mov ecx, 4
@@ -54,11 +55,14 @@ displayCube proc
 	mov esi, OFFSET sides
 	call printSide
 
+	pop ecx
+	pop esi
 ret
 displayCube ENDP
 
 printSide PROC
 	push esi
+	push eax
 	push ebx
 	push ecx
 	mov ebx, 3
@@ -115,6 +119,7 @@ printSide PROC
 	jnz pSide
 	pop ecx
 	pop ebx
+	pop eax
 	pop esi
 	ret
 printSide ENDP
@@ -122,6 +127,8 @@ printSide ENDP
 ;clockwise turn 
 turnClock PROC
 	push esi
+	push eax
+	push ebx
 
 	mov al, [esi]; move corners to new locations 0->2, 2->8, 8->6, 6->0
 	mov bl, [esi + 2]
@@ -142,12 +149,19 @@ turnClock PROC
 	mov [esi+1], bl
 
 	mov al, [esi + 5]
+	pop ebx
+	pop eax
 	pop esi
 	ret
 	
 turnClock ENDP
 
 turnW PROC
+push esi
+push edi
+push eax
+push ebx
+push ecx
 mov esi, OFFSET sides
 call turnClock
 
@@ -155,8 +169,6 @@ mov esi, OFFSET sides + 9 * b + 6; set esi to point to the 7th element in blue a
 mov edi, OFFSET sides + 9 * r + 6; set edi to point to the 7th element in red array
 
 mov ecx, 3;
-push esi
-push edi
 wSwap:
 push edi
 	
@@ -176,20 +188,27 @@ inc esi
 pop edi
 inc edi
 loop wSwap
-pop esi
+pop ecx
+pop ebx
+pop eax
 pop edi
+pop esi
 ret
 turnW ENDP
 
 turnY PROC
+push esi
+push edi
+push eax
+push ebx
+push ecx
 mov esi, OFFSET sides + 9*y
 call turnClock
 
 mov esi, OFFSET sides + 9 * b; set esi to point to the 1st element in blue array
 mov edi, OFFSET sides + 9 * r; set edi to point to the 1st element in red array
 mov ecx, 3;
-push esi
-push edi
+
 wSwap:
 push edi
 	
@@ -209,12 +228,20 @@ inc esi
 pop edi
 inc edi
 loop wSwap
-pop esi
+pop ecx
+pop ebx
+pop eax
 pop edi
+pop esi
 ret
 turnY ENDP
 
 turnB PROC
+push esi
+push edi
+push eax
+push ebx
+push ecx
 mov esi, OFFSET sides + 9*b
 call turnClock
 
@@ -233,10 +260,20 @@ mov [esi], bl
 add esi, 3
 inc edi
 loop bmvSqr
+
+pop ecx
+pop ebx
+pop eax
+pop edi
+pop esi
 ret
 turnB ENDP
 
 turnR PROC
+push esi
+push edi
+push eax
+push ebx
 mov esi, OFFSET sides + 9*r
 call turnClock
 
@@ -272,10 +309,20 @@ mov [OFFSET sides + 2], bl
 mov bl, [OFFSET sides + 9*b + 8]
 mov [OFFSET sides + 9*b + 8], al
 mov [esi], bl
+
+pop ebx
+pop eax
+pop edi
+pop esi
 ret
 turnR ENDP
 
 turnG PROC
+push esi
+push edi
+push eax
+push ebx
+push ecx
 mov esi, OFFSET sides + 9*g
 call turnClock
 
@@ -294,10 +341,20 @@ mov [esi], bl
 add esi, 3
 inc edi
 loop gmvSqr
+
+pop ecx
+pop ebx
+pop eax
+pop edi
+pop esi
 ret
 turnG ENDP
 
 turnO PROC
+push esi
+push edi
+push eax
+push ebx
 mov esi, OFFSET sides + 9*o
 call turnClock
 
@@ -334,6 +391,10 @@ mov bl, [OFFSET sides + 9*g + 2]
 mov [OFFSET sides + 9*g + 2], al
 mov [esi], bl
 
+pop ebx
+pop eax
+pop edi
+pop esi
 ret
 turnO ENDP
 
