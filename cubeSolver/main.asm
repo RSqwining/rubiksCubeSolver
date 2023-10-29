@@ -6,6 +6,17 @@ ExitProcess PROTO, dwExitCode: DWORD
 INCLUDE Irvine32.inc
 
 .data
+;outFile
+filename byte "moves.txt"
+filehandle dword ?
+MOVESIZE = 3
+front byte "F", 13, 10, 0
+back byte "B", 13, 10, 0
+right byte "R", 13, 10, 0
+left byte "L", 13, 10, 0
+up byte "U", 13, 10, 0
+down byte "D", 13, 10, 0
+
 ;define colors
 w equ 0
 y equ 1
@@ -27,15 +38,25 @@ sides byte 9 DUP(w); white opposes yellow
 .code
 main PROC
 	;call initCube either shuffle solved cube or generate solvable cube
+	call initCube
 	
 	call turnO
 
 	call displayCube
 	
+	mov eax, filehandle
+	call CloseFile
 	INVOKE ExitProcess, 0
 main ENDP
 
 initCube proc 
+	push edx
+	push eax
+	mov edx, OFFSET filename
+	call CreateOutputFile
+	mov filehandle, eax
+	pop eax
+	pop edx
 	ret
 initCube ENDP
 
@@ -124,11 +145,21 @@ printSide PROC
 	ret
 printSide ENDP
 
-;clockwise turn 
+; clockwise turn 
+; Parameters - EDX = side to write to file
 turnClock PROC
 	push esi
 	push eax
 	push ebx
+
+	;write move to file
+	push eax
+	push ecx
+	mov eax, filehandle
+	mov ecx, MOVESIZE
+	call WriteToFile
+	pop ecx
+	pop eax
 
 	mov al, [esi]; move corners to new locations 0->2, 2->8, 8->6, 6->0
 	mov bl, [esi + 2]
@@ -162,6 +193,9 @@ push edi
 push eax
 push ebx
 push ecx
+push edx
+
+mov edx, OFFSET down
 mov esi, OFFSET sides
 call turnClock
 
@@ -188,6 +222,7 @@ inc esi
 pop edi
 inc edi
 loop wSwap
+pop edx
 pop ecx
 pop ebx
 pop eax
@@ -202,6 +237,9 @@ push edi
 push eax
 push ebx
 push ecx
+push edx
+
+mov edx, OFFSET up
 mov esi, OFFSET sides + 9*y
 call turnClock
 
@@ -228,6 +266,7 @@ inc esi
 pop edi
 inc edi
 loop wSwap
+pop edx
 pop ecx
 pop ebx
 pop eax
@@ -242,6 +281,9 @@ push edi
 push eax
 push ebx
 push ecx
+push edx
+
+mov edx, OFFSET front
 mov esi, OFFSET sides + 9*b
 call turnClock
 
@@ -261,6 +303,7 @@ add esi, 3
 inc edi
 loop bmvSqr
 
+pop edx
 pop ecx
 pop ebx
 pop eax
@@ -274,6 +317,9 @@ push esi
 push edi
 push eax
 push ebx
+push edx
+
+mov edx, OFFSET right
 mov esi, OFFSET sides + 9*r
 call turnClock
 
@@ -310,6 +356,7 @@ mov bl, [OFFSET sides + 9*b + 8]
 mov [OFFSET sides + 9*b + 8], al
 mov [esi], bl
 
+pop edx
 pop ebx
 pop eax
 pop edi
@@ -323,6 +370,9 @@ push edi
 push eax
 push ebx
 push ecx
+push edx
+
+mov edx, OFFSET back
 mov esi, OFFSET sides + 9*g
 call turnClock
 
@@ -342,6 +392,7 @@ add esi, 3
 inc edi
 loop gmvSqr
 
+pop edx
 pop ecx
 pop ebx
 pop eax
@@ -355,6 +406,9 @@ push esi
 push edi
 push eax
 push ebx
+push edx
+
+mov edx, OFFSET left
 mov esi, OFFSET sides + 9*o
 call turnClock
 
@@ -391,6 +445,7 @@ mov bl, [OFFSET sides + 9*g + 2]
 mov [OFFSET sides + 9*g + 2], al
 mov [esi], bl
 
+pop edx
 pop ebx
 pop eax
 pop edi
