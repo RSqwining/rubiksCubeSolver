@@ -43,6 +43,9 @@ main PROC
 	call turnO
 
 	call displayCube
+	call makeDaisy
+	call displayCube
+	call solveWEdges
 	
 	mov eax, filehandle
 	call CloseFile
@@ -453,6 +456,341 @@ pop esi
 ret
 turnO ENDP
 
+makeDaisy proc ;go through each edge to finish daisy
+	mustcheckfour:
+		mov esi, OFFSET sides + 9*y
+		cmp byte ptr [esi+1], w
+		jne fW
+		cmp byte ptr [esi+3], w
+		jne fW
+		cmp byte ptr [esi+5], w
+		jne fW
+		cmp byte ptr [esi+7], w
+		jne fW
+		je continue
+	fW:
+		call findW
+		jmp mustcheckfour
+	continue:
+	ret
+makeDaisy ENDP
+
+findW proc ;find a white edge
+	whit: ;assume on white face
+		mov esi, OFFSET sides + 9*w
+		mov al, 1
+		cmp byte ptr [esi+1], w
+		je Wmove
+		mov al, 3
+		cmp byte ptr [esi+3], w
+		je Wmove
+		mov al, 5
+		cmp byte ptr [esi+5], w
+		je Wmove
+		mov al, 7
+		cmp byte ptr [esi+7], w
+		je Wmove
+	blu:
+		mov esi, OFFSET sides + 9*b
+		mov al, 1
+		cmp byte ptr [esi+1], w
+		je Bmove
+		mov al, 3
+		cmp byte ptr [esi+3], w
+		je Bmove
+		mov al, 5
+		cmp byte ptr [esi+5], w
+		je Bmove
+		mov al, 7
+		cmp byte ptr [esi+7], w
+		je Bmove
+	rd:
+		mov esi, OFFSET sides + 9*r
+		mov al, 1
+		cmp byte ptr [esi+1], w
+		je Rmove
+		mov al, 3
+		cmp byte ptr [esi+3], w
+		je Rmove
+		mov al, 5
+		cmp byte ptr [esi+5], w
+		je Rmove
+		mov al, 7
+		cmp byte ptr [esi+7], w
+		je Rmove
+	grn:
+		mov esi, OFFSET sides + 9*g
+		mov al, 1
+		cmp byte ptr [esi+1], w
+		je Gmove
+		mov al, 3
+		cmp byte ptr [esi+3], w
+		je Gmove
+		mov al, 5
+		cmp byte ptr [esi+5], w
+		je Gmove
+		mov al, 7
+		cmp byte ptr [esi+7], w
+		je Gmove
+	ornge:
+		mov esi, OFFSET sides + 9*o
+		mov al, 1
+		cmp byte ptr [esi+1], w
+		je Omove
+		mov al, 3
+		cmp byte ptr [esi+3], w
+		je Omove
+		mov al, 5
+		cmp byte ptr [esi+5], w
+		je Omove
+		mov al, 7
+		cmp byte ptr [esi+7], w
+		je Omove
+	Wmove:
+		call Wmove
+		jmp continue
+	Bmove:
+		call Bmove
+		jmp continue
+	Rmove:
+		call Rmove
+		jmp continue
+	Gmove:
+		call Gmove
+		jmp continue
+	Omove:
+		call Omove
+		jmp continue
+	continue:
+	ret
+findW ENDP
+
+Wmove proc
+	mov esi, OFFSET sides + 9*y
+	initialstep:
+		cmp al, 1
+		je solveB
+		cmp al, 5
+		je solveS5
+		cmp al, 3
+		je solveS3
+		cmp al, 7
+		je solveT
+	solveT:
+		cmp byte ptr [esi+7], w
+		je rotateY
+		call turnB
+		call turnB
+		jmp continue
+	solveS5:
+		cmp byte ptr [esi+5], w
+		je rotateY
+		call turnR
+		call turnR
+		jmp continue
+	solveS3:
+		cmp byte ptr [esi+3], w
+		je rotateY
+		call turnO
+		call turnO
+		jmp continue
+	solveB:
+		cmp byte ptr [esi+1], w
+		je rotateY
+		call turnG
+		call turnG
+		jmp continue
+	rotateY:
+		call turnY
+		jmp initialstep
+	continue:
+	ret
+Wmove ENDP
+
+Bmove proc
+	mov esi, OFFSET sides + 9*y
+	cmp al, 1
+	je solveT
+	cmp al, 3
+	je solveS3
+	cmp al, 5
+	je solveS5
+	cmp al, 7
+	je solveB
+	solveT:
+		call turnB
+		jmp solveS5
+	solveS3:
+		cmpY:
+			cmp byte ptr [esi+3], w
+			je rtY
+			call turnO
+			call turnO
+			call turnO
+			jmp continue
+		rtY:
+			call turnY
+			jmp cmpY
+	solveS5:
+		compY:
+			cmp byte ptr [esi+5], w
+			je rotY
+			call turnR
+			jmp continue
+		rotY:
+			call turnY
+			jmp compY 
+	solveB:
+		checkYs:
+			cmp byte ptr [esi+7], w
+			je rotatY
+			call turnB
+			jmp solveS3
+		rotatY:
+			call turnY
+			jmp checkYs
+	continue:
+	ret
+Bmove ENDP
+
+
+Rmove proc
+mov esi, OFFSET sides + 9*y
+	cmp al, 1
+	je solveT
+	cmp al, 3
+	je solveS3
+	cmp al, 5
+	je solveS5
+	cmp al, 7
+	je solveB
+	solveT:
+		call turnR
+		jmp solveS5
+	solveS3:
+		cmpY:
+			cmp byte ptr [esi+3], w
+			je rtY
+			call turnB
+			call turnB
+			call turnB
+			jmp continue
+		rtY:
+			call turnY
+			jmp cmpY
+	solveS5:
+		compY:
+			cmp byte ptr [esi+5], w
+			je rotY
+			call turnG
+			jmp continue
+		rotY:
+			call turnY
+			jmp compY 
+	solveB:
+		checkYs:
+			cmp byte ptr [esi+7], w
+			je rotatY
+			call turnR
+			jmp solveS3
+		rotatY:
+			call turnY
+			jmp checkYs
+	continue:
+	ret
+Rmove ENDP
+
+Gmove proc
+mov esi, OFFSET sides + 9*y
+	cmp al, 1
+	je solveT
+	cmp al, 3
+	je solveS3
+	cmp al, 5
+	je solveS5
+	cmp al, 7
+	je solveB
+	solveT:
+		call turnG
+		jmp solveS5
+	solveS3:
+		cmpY:
+			cmp byte ptr [esi+3], w
+			je rtY
+			call turnR
+			call turnR
+			call turnR
+			jmp continue
+		rtY:
+			call turnY
+			jmp cmpY
+	solveS5:
+		compY:
+			cmp byte ptr [esi+5], w
+			je rotY
+			call turnO
+			jmp continue
+		rotY:
+			call turnY
+			jmp compY 
+	solveB:
+		checkYs:
+			cmp byte ptr [esi+7], w
+			je rotatY
+			call turnG
+			jmp solveS3
+		rotatY:
+			call turnY
+			jmp checkYs
+	continue:
+	ret
+Gmove ENDP
+
+Omove proc
+mov esi, OFFSET sides + 9*y
+	cmp al, 1
+	je solveT
+	cmp al, 3
+	je solveS3
+	cmp al, 5
+	je solveS5
+	cmp al, 7
+	je solveB
+	solveT:
+		call turnO
+		jmp solveS5
+	solveS3:
+		cmpY:
+			cmp byte ptr [esi+3], w
+			je rtY
+			call turnG
+			call turnG
+			call turnG
+			jmp continue
+		rtY:
+			call turnY
+			jmp cmpY
+	solveS5:
+		compY:
+			cmp byte ptr [esi+5], w
+			je rotY
+			call turnB
+			jmp continue
+		rotY:
+			call turnY
+			jmp compY 
+	solveB:
+		checkYs:
+			cmp byte ptr [esi+7], w
+			je rotatY
+			call turnO
+			jmp solveS3
+		rotatY:
+			call turnY
+			jmp checkYs
+	continue:
+	ret
+Omove ENDP
 ; determine colors on side of desired color, turn both of those
 turnMiddle PROC
 
