@@ -78,6 +78,7 @@ displayCube proc
 	loop printSides
 	mov esi, OFFSET sides
 	call printSide
+	call crlf
 
 	pop ecx
 	pop esi
