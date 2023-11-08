@@ -593,13 +593,13 @@ Wmove proc
 	mov esi, OFFSET sides + 9*y
 	initialstep:
 		cmp al, 1
-		je solveB
+		je solveT
 		cmp al, 5
 		je solveS5
 		cmp al, 3
 		je solveS3
 		cmp al, 7
-		je solveT
+		je solveB
 	solveT:
 		cmp byte ptr [esi+7], w
 		je rotateY
@@ -693,7 +693,7 @@ mov esi, OFFSET sides + 9*y
 		jmp solveS5
 	solveS3:
 		cmpY:
-			cmp byte ptr [esi+3], w
+			cmp byte ptr [esi+7], w
 			je rtY
 			call turnB
 			call turnB
@@ -704,7 +704,7 @@ mov esi, OFFSET sides + 9*y
 			jmp cmpY
 	solveS5:
 		compY:
-			cmp byte ptr [esi+5], w
+			cmp byte ptr [esi+1], w
 			je rotY
 			call turnG
 			jmp continue
@@ -713,7 +713,7 @@ mov esi, OFFSET sides + 9*y
 			jmp compY 
 	solveB:
 		checkYs:
-			cmp byte ptr [esi+7], w
+			cmp byte ptr [esi+5], w
 			je rotatY
 			call turnR
 			jmp solveS3
