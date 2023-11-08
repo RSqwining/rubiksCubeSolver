@@ -815,6 +815,117 @@ mov esi, OFFSET sides + 9*y
 	continue:
 	ret
 Omove ENDP
+
+solveWEdges PROC
+	push esi
+	push ebx
+
+	mov ebx, 0
+	mov esi, OFFSET sides + 9*y
+
+	checkForW:
+	call checkWAndGCenter
+	call checkWAndOCenter
+	call checkWAndRCenter
+	call checkWAndBCenter
+	cmp ebx, 4
+	je wEdgeSolved
+	call turnY
+	call displayCube
+	jmp checkForW
+
+	wEdgeSolved:
+	pop ebx
+	pop esi
+	ret
+solveWEdges ENDP
+
+; procs to check white edges, increments ebx if edge was found and processed
+checkWAndGCenter PROC
+	push esi
+	push eax
+
+	cmp byte ptr [esi + 1], w
+	jne done
+
+	mov esi, OFFSET sides + 9*g
+	mov al, [esi + 1]
+	cmp al, [esi + 4]
+	jne done
+	call turnG
+	call turnG
+	inc ebx
+
+	done:
+	pop eax
+	pop esi
+	ret
+checkWAndGCenter ENDP
+
+checkWAndOCenter PROC
+	push esi
+	push eax
+
+	cmp byte ptr [esi + 3], w
+	jne done
+
+	mov esi, OFFSET sides + 9*o
+	mov al, [esi + 1]
+	cmp al, [esi + 4]
+	jne done
+
+	call turnO
+	call turnO
+	inc ebx
+
+	done:
+	pop eax
+	pop esi
+	ret
+checkWAndOCenter ENDP
+
+checkWAndRCenter PROC
+	push esi
+	push eax
+	cmp byte ptr [esi + 5], w
+	jne done
+
+	mov esi, OFFSET sides + 9*r
+	mov al, [esi + 1]
+	cmp al, [esi + 4]
+	jne done
+	call turnR
+	call turnR
+	inc ebx
+
+	done:
+	pop eax
+	pop esi
+	ret
+checkWAndRCenter ENDP
+
+checkWAndBCenter PROC
+	push esi
+	push eax
+	cmp byte ptr [esi + 7], w
+	jne done
+
+	mov esi, OFFSET sides + 9*b
+	mov al, [esi + 1]
+	cmp al, [esi + 4]
+	jne done
+	call turnB
+	call turnB
+	inc ebx
+
+	done:
+	pop eax
+	pop esi
+	ret
+checkWAndBCenter ENDP
+
+
+
 ; determine colors on side of desired color, turn both of those
 turnMiddle PROC
 
