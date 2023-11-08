@@ -188,7 +188,6 @@ turnClock PROC
 	pop eax
 	pop esi
 	ret
-	
 turnClock ENDP
 
 turnW PROC
@@ -247,8 +246,8 @@ mov edx, OFFSET up
 mov esi, OFFSET sides + 9*y
 call turnClock
 
-mov esi, OFFSET sides + 9 * b; set esi to point to the 1st element in blue array
-mov edi, OFFSET sides + 9 * r; set edi to point to the 1st element in red array
+mov esi, OFFSET sides + 9 * o; set esi to point to the 1st element in blue array
+mov edi, OFFSET sides + 9 * g; set edi to point to the 1st element in red array
 mov ecx, 3;
 
 wSwap:
@@ -257,13 +256,13 @@ push edi
 mov al, [esi]; swap the elements for blue, red, green, and orange
 mov bl, [edi]
 mov [edi], al
-add edi, 9
+sub edi, 9
 mov al, [edi]
 mov [edi], bl
-add edi, 9
+sub edi, 9
 mov bl, [edi]
 mov [edi], al
-add edi, 9
+sub edi, 9
 mov [esi], bl
 	
 inc esi
@@ -291,21 +290,33 @@ mov edx, OFFSET front
 mov esi, OFFSET sides + 9*b
 call turnClock
 
-mov esi, OFFSET sides + 9 * r; use pointer for orange / red
-mov edi, OFFSET sides + 6; use pointer for white/yellow
 mov ecx, 3
-bmvSqr:
-mov  al, [esi]
-mov  bl, [edi]
+mov ebx, 0
+mov edx, 0
+bMvSqr:
+mov esi, OFFSET sides + 9 * r
+add esi, edx
+
+mov edi, OFFSET sides + 9 * w + 8
+sub edi, ebx
+
+mov al, [esi]
+mov ah, [edi]
 mov [edi], al
-mov al, [esi + 9 * (o-r) + 2]
-mov [esi + 9 * (o-r) + 2], bl
-mov bl, [edi + 9 * (y-w)]
-mov [edi + 9 * (y-w)], al
-mov [esi], bl
-add esi, 3
-inc edi
-loop bmvSqr
+
+mov edi, OFFSET sides + 9*o + 8
+sub edi, edx
+mov al, [edi]
+mov [edi], ah
+
+mov edi, OFFSET sides  + 9*y + 6
+add edi, ebx
+mov ah, [edi]
+mov [edi], al
+mov [esi], ah 
+add edx, 3
+inc ebx
+loop bMvSqr
 
 pop edx
 pop ecx
@@ -380,21 +391,33 @@ mov edx, OFFSET back
 mov esi, OFFSET sides + 9*g
 call turnClock
 
-mov esi, OFFSET sides + 9 * r + 2
-mov edi, OFFSET sides
 mov ecx, 3
-gmvSqr:
-mov  al, [esi]
-mov  bl, [edi]
+mov ebx, 0
+mov edx, 0
+gMvSqr:
+mov esi, OFFSET sides + 9 * r + 2
+
+add esi, edx
+mov edi, OFFSET sides + 9 * y
+add edi, ebx
+
+mov al, [esi]
+mov ah, [edi]
 mov [edi], al
-mov al, [esi + 9 * (o-r) - 2]
-mov [esi + 9 * (o-r) - 2], bl
-mov bl, [edi + 9 * (y-w)]
-mov [edi + 9 * (y-w)], al
-mov [esi], bl
-add esi, 3
-inc edi
-loop gmvSqr
+
+mov edi, OFFSET sides + 9*o + 6
+sub edi, edx
+mov al, [edi]
+mov [edi], ah
+
+mov edi, OFFSET sides  + 9*w + 2
+sub edi, ebx
+mov ah, [edi]
+mov [edi], al
+mov [esi], ah 
+add edx, 3
+inc ebx
+loop gMvSqr
 
 pop edx
 pop ecx
