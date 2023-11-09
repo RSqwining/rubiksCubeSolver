@@ -9,13 +9,13 @@ INCLUDE Irvine32.inc
 ;outFile
 filename byte "moves.txt"
 filehandle dword ?
-MOVESIZE = 3
-front byte "F", 13, 10, 0
-back byte "B", 13, 10, 0
-right byte "R", 13, 10, 0
-left byte "L", 13, 10, 0
-up byte "U", 13, 10, 0
-down byte "D", 13, 10, 0
+MOVESIZE = 2
+front byte "F "
+back byte "B "
+right byte "R "
+left byte "L "
+up byte "U "
+down byte "D "
 
 ;define colors
 w equ 0
@@ -39,14 +39,26 @@ sides byte 9 DUP(w); white opposes yellow
 main PROC
 	;call initCube either shuffle solved cube or generate solvable cube
 	call initCube
-	
-	call turnO
 
+	;call turnW
+	;call turnY
+	;call turnY
+	;call turnG
+	;call turnR
+	;call turnG
+	;call turnB
+	;call turnB
+	;call turnB
+	;call turnR
+	;call turnR
+	;call turnO
+	;call turnO
 	call displayCube
 	call makeDaisy
 	call displayCube
 	call solveWEdges
-	
+	call displayCube
+
 	mov eax, filehandle
 	call CloseFile
 	INVOKE ExitProcess, 0
@@ -82,7 +94,7 @@ displayCube proc
 
 	pop ecx
 	pop esi
-ret
+	ret
 displayCube ENDP
 
 printSide PROC
@@ -593,13 +605,13 @@ Wmove proc
 	mov esi, OFFSET sides + 9*y
 	initialstep:
 		cmp al, 1
-		je solveT
+		je solveB
 		cmp al, 5
 		je solveS5
 		cmp al, 3
 		je solveS3
 		cmp al, 7
-		je solveB
+		je solveT
 	solveT:
 		cmp byte ptr [esi+7], w
 		je rotateY
