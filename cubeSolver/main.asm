@@ -58,6 +58,8 @@ main PROC
 	call displayCube
 	call solveWEdges
 	call displayCube
+	call makeFLayer
+	call displayCube
 
 	mov eax, filehandle
 	call CloseFile
@@ -935,6 +937,1220 @@ checkWAndBCenter PROC
 	pop esi
 	ret
 checkWAndBCenter ENDP
+
+makeFLayer proc
+    mustsolvefour:
+        call fixBRW
+        call fixRGW
+        call fixGOW
+        call fixOBW
+        ret
+makeFLayer ENDP
+
+fixBRW proc
+    Tcorner1:
+        checkWT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], w
+            je checkBT1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], w
+            je checkBT1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], w
+            je checkBT1
+            jmp Tcorner3
+        checkBT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], b
+            je checkRT1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], b
+            je checkRT1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], b
+            je checkRT1
+            jmp Tcorner3
+        checkRT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], r
+            je moveBRW_T1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], r
+            je moveBRW_T1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], r
+            je moveBRW_T1
+            jmp Tcorner3
+    Tcorner3:
+        checkWT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], w
+            je checkBT3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], w
+            je checkBT3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], w
+            je checkBT3
+            jmp Tcorner7
+        checkBT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], b
+            je checkRT3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], b
+            je checkRT3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], b
+            je checkRT3
+            jmp Tcorner7
+        checkRT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], r
+            je moveBRW_T3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], r
+            je moveBRW_T3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], r
+            je moveBRW_T3
+            jmp Tcorner7
+    Tcorner7:
+        checkWT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], w
+            je checkBT7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], w
+            je checkBT7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], w
+            je checkBT7
+            jmp Tcorner9
+        checkBT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], b
+            je checkRT7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], b
+            je checkRT7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], b
+            je checkRT7
+            jmp Tcorner9
+        checkRT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], r
+            je moveBRW_T7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], r
+            je moveBRW_T7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], r
+            je moveBRW_T7
+            jmp Tcorner9
+    Tcorner9:
+        checkWT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], w
+            je checkBT9
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], w
+            je checkBT9
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], w
+            je checkBT9
+            jmp Bcorner1
+        checkBT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], b
+            je checkRT9
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], b
+            je checkRT9
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], b
+            je checkRT9
+            jmp Bcorner1
+        checkRT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], r
+            je moveBRW_T9
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], r
+            je moveBRW_T9
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], r
+            je moveBRW_T9
+            jmp Bcorner1
+    Bcorner1:
+        checkWB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], w
+            je checkBB1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], w
+            je checkBB1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], w
+            je checkBB1
+            jmp Bcorner3
+        checkBB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], b
+            je checkRB1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], b
+            je checkRB1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], b
+            je checkRB1
+            jmp Bcorner3
+        checkRB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], r
+            je doB1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], r
+            je doB1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], r
+            je doB1
+            jmp Bcorner3
+        doB1:
+            call ralgoG
+            jmp moveBRW_T1
+    Bcorner3:
+        checkWB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], w
+            je checkBB3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], w
+            je checkBB3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], w
+            je checkBB3
+            jmp Bcorner7
+        checkBB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], b
+            je checkRB3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], b
+            je checkRB3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], b
+            je checkRB3
+            jmp Bcorner7
+        checkRB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], r
+            je doB3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], r
+            je doB3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], r
+            je doB3
+            jmp Bcorner7
+        doB3:
+            call ralgoR
+            jmp moveBRW_T3
+    Bcorner7:
+        checkWB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], w
+            je checkBB7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], w
+            je checkBB7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], w
+            je checkBB7
+            jmp Bcorner9
+        checkBB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], b
+            je checkRB7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], b
+            je checkRB7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], b
+            je checkRB7
+            jmp Bcorner9
+        checkRB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], r
+            je doB7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], r
+            je doB7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], r
+            je doB7
+            jmp Bcorner9
+        doB7:
+            call ralgoO
+            jmp moveBRW_T7
+    Bcorner9:
+        call ralgoB
+        jmp moveBRW_T9
+    moveBRW_T1:
+        call turnY
+        call turnY
+        rightyalgoT1:
+            call ralgoB
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+8], w
+        jne rightyalgoT1
+        jmp continue
+    moveBRW_T3:
+        call turnY
+        rightyalgoT3:
+            call ralgoB
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+8], w
+        jne rightyalgoT3
+        jmp continue
+    moveBRW_T7:
+        call turnY
+        call turnY
+    call turnY
+        rightyalgoT7:
+            call ralgoB
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+8], w
+        jne rightyalgoT7
+        jmp continue
+    moveBRW_T9:
+        rightyalgoT9:
+            call ralgoB
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+8], w
+        jne rightyalgoT9
+        jmp continue
+    continue:
+        ret
+fixBRW ENDP
+
+fixRGW proc
+    Tcorner1:
+        checkWT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], w
+            je checkRT1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], w
+            je checkRT1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], w
+            je checkRT1
+            jmp Tcorner3
+        checkRT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], r
+            je checkGT1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], r
+            je checkGT1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], r
+            je checkGT1
+            jmp Tcorner3
+        checkGT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], g
+            je moveRGW_T1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], g
+            je moveRGW_T1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], g
+            je moveRGW_T1
+            jmp Tcorner3
+    Tcorner3:
+        checkWT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], w
+            je checkRT3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], w
+            je checkRT3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], w
+            je checkRT3
+            jmp Tcorner7
+        checkRT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], r
+            je checkGT3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], r
+            je checkGT3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], r
+            je checkGT3
+            jmp Tcorner7
+        checkGT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], g
+            je moveRGW_T3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], g
+            je moveRGW_T3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], g
+            je moveRGW_T3
+            jmp Tcorner7
+    Tcorner7:
+        checkWT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], w
+            je checkRT7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], w
+            je checkRT7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], w
+            je checkRT7
+            jmp Tcorner9
+        checkRT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], r
+            je checkGT7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], r
+            je checkGT7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], r
+            je checkGT7
+            jmp Tcorner9
+        checkGT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], g
+            je moveRGW_T7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], g
+            je moveRGW_T7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], g
+            je moveRGW_T7
+            jmp Tcorner9
+    Tcorner9:
+        checkWT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], w
+            je checkRT9
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], w
+            je checkRT9
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], w
+            je checkRT9
+            jmp Bcorner1
+        checkRT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], r
+            je checkGT9
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], r
+            je checkGT9
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], r
+            je checkGT9
+            jmp Bcorner1
+        checkGT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], g
+            je moveRGW_T9
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], g
+            je moveRGW_T9
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], g
+            je moveRGW_T9
+            jmp Bcorner1
+    Bcorner1:
+        checkWB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], w
+            je checkRB1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], w
+            je checkRB1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], w
+            je checkRB1
+            jmp Bcorner3
+        checkRB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], r
+            je checkGB1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], r
+            je checkGB1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], r
+            je checkGB1
+            jmp Bcorner3
+        checkGB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], g
+            je doR1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], g
+            je doR1
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], g
+            je doR1
+            jmp Bcorner3
+        doR1:
+            call ralgoO
+            jmp moveRGW_T1
+    Bcorner3:
+        checkWB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], w
+            je checkRB3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], w
+            je checkRB3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], w
+            je checkRB3
+            jmp Bcorner7
+        checkRB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], r
+            je checkGB3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], r
+            je checkGB3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], r
+            je checkGB3
+            jmp Bcorner7
+        checkGB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], g
+            je doR3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], g
+            je doR3
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], g
+            je doR3
+            jmp Bcorner7
+        doR3:
+            call ralgoG
+            jmp moveRGW_T3
+    Bcorner7:
+        checkWB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], w
+            je checkRB7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], w
+            je checkRB7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], w
+            je checkRB7
+            jmp Bcorner9
+        checkRB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], r
+            je checkGB7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], r
+            je checkGB7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], r
+            je checkGB7
+            jmp Bcorner9
+        checkGB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], g
+            je doR7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], g
+            je doR7
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], g
+            je doR7
+            jmp Bcorner9
+        doR7:
+            call ralgoB
+            jmp moveRGW_T7
+    Bcorner9:
+        call ralgoR
+        jmp moveRGW_T9
+    moveRGW_T1:
+        call turnY
+        call turnY
+        rightyalgoT1:
+            call ralgoR
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+2], w
+        jne rightyalgoT1
+        jmp continue
+    moveRGW_T3:
+        call turnY
+        rightyalgoT3:
+            call ralgoR
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+2], w
+        jne rightyalgoT3
+        jmp continue
+    moveRGW_T7:
+        call turnY
+        call turnY
+        call turnY
+        rightyalgoT7:
+            call ralgoR
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+2], w
+        jne rightyalgoT7
+        jmp continue
+    moveRGW_T9:
+        rightyalgoT9:
+            call ralgoR
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+2], w
+        jne rightyalgoT9
+        jmp continue
+    continue:
+        ret
+fixRGW ENDP
+
+fixGOW proc
+    Tcorner1:
+        checkWT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], w
+            je checkGT1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], w
+            je checkGT1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], w
+            je checkGT1
+            jmp Tcorner3
+        checkGT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], g
+            je checkOT1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], g
+            je checkOT1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], g
+            je checkOT1
+            jmp Tcorner3
+        checkOT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], o
+            je moveGOW_T1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], o
+            je moveGOW_T1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], o
+            je moveGOW_T1
+            jmp Tcorner3
+    Tcorner3:
+        checkWT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], w
+            je checkGT3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], w
+            je checkGT3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], w
+            je checkGT3
+            jmp Tcorner7
+        checkGT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], g
+            je checkOT3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], g
+            je checkOT3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], g
+            je checkOT3
+            jmp Tcorner7
+        checkOT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], o
+            je moveGOW_T3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], o
+            je moveGOW_T3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], o
+            je moveGOW_T3
+            jmp Tcorner7
+    Tcorner7:
+        checkWT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], w
+            je checkGT7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], w
+            je checkGT7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], w
+            je checkGT7
+            jmp Tcorner9
+        checkGT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], g
+            je checkOT7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], g
+            je checkOT7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], g
+            je checkOT7
+            jmp Tcorner9
+        checkOT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], o
+            je moveGOW_T7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], o
+            je moveGOW_T7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], o
+            je moveGOW_T7
+            jmp Tcorner9
+    Tcorner9:
+        checkWT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], w
+            je checkGT9
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], w
+            je checkGT9
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], w
+            je checkGT9
+            jmp Bcorner1
+        checkGT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], g
+            je checkOT9
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], g
+            je checkOT9
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], g
+            je checkOT9
+            jmp Bcorner1
+        checkOT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], o
+            je moveGOW_T9
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], o
+            je moveGOW_T9
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], o
+            je moveGOW_T9
+            jmp Bcorner1
+    Bcorner1:
+        checkWB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], w
+            je checkGB1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], w
+            je checkGB1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], w
+            je checkGB1
+            jmp Bcorner3
+        checkGB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], g
+            je checkOB1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], g
+            je checkOB1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], g
+            je checkOB1
+            jmp Bcorner3
+        checkOB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], o
+            je doG1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], o
+            je doG1
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], o
+            je doG1
+            jmp Bcorner3
+        doG1:
+            call ralgoB
+            jmp moveGOW_T1
+    Bcorner3:
+        checkWB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], w
+            je checkGB3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], w
+            je checkGB3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], w
+            je checkGB3
+            jmp Bcorner7
+        checkGB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], g
+            je checkOB3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], g
+            je checkOB3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], g
+            je checkOB3
+            jmp Bcorner7
+        checkOB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+6], o
+            je doG3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+6], o
+            je doG3
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+8], o
+            je doG3
+            jmp Bcorner7
+        doG3:
+            call ralgoO
+            jmp moveGOW_T3
+    Bcorner7:
+        checkWB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], w
+            je checkGB7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], w
+            je checkGB7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], w
+            je checkGB7
+            jmp Bcorner9
+        checkGB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], g
+            je checkOB7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], g
+            je checkOB7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], g
+            je checkOB7
+            jmp Bcorner9
+        checkOB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], o
+            je doG7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], o
+            je doG7
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], o
+            je doG7
+            jmp Bcorner9
+        doG7:
+            call ralgoR
+            jmp moveGOW_T7
+    Bcorner9:
+        call ralgoG
+        jmp moveGOW_T9
+    moveGOW_T1:
+        call turnY
+        call turnY
+        rightyalgoT1:
+            call ralgoG
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi], w
+        jne rightyalgoT1
+        jmp continue
+    moveGOW_T3:
+        call turnY
+        rightyalgoT3:
+            call ralgoG
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi], w
+        jne rightyalgoT3
+        jmp continue
+    moveGOW_T7:
+        call turnY
+        call turnY
+        call turnY
+        rightyalgoT7:
+            call ralgoG
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi], w
+        jne rightyalgoT7
+        jmp continue
+    moveGOW_T9:
+        rightyalgoT9:
+            call ralgoG
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi], w
+        jne rightyalgoT9
+        jmp continue
+    continue:
+        ret
+fixGOW ENDP
+
+fixOBW proc
+    Tcorner1:
+        checkWT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], w
+            je checkOT1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], w
+            je checkOT1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], w
+            je checkOT1
+            jmp Tcorner3
+        checkOT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], o
+            je checkBT1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], o
+            je checkBT1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], o
+            je checkBT1
+            jmp Tcorner3
+        checkBT1:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+2], b
+            je moveOBW_T1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi], b
+            je moveOBW_T1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+2], b
+            je moveOBW_T1
+            jmp Tcorner3
+    Tcorner3:
+        checkWT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], w
+            je checkOT3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], w
+            je checkOT3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], w
+            je checkOT3
+            jmp Tcorner7
+        checkOT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], o
+            je checkBT3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], o
+            je checkBT3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], o
+            je checkBT3
+            jmp Tcorner7
+        checkBT3:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+8], b
+            je moveOBW_T3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi], b
+            je moveOBW_T3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+2], b
+            je moveOBW_T3
+            jmp Tcorner7
+    Tcorner7:
+        checkWT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], w
+            je checkOT7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], w
+            je checkOT7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], w
+            je checkOT7
+            jmp Tcorner9
+        checkOT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], o
+            je checkBT7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], o
+            je checkBT7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], o
+            je checkBT7
+            jmp Tcorner9
+        checkBT7:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi], b
+            je moveOBW_T7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi], b
+            je moveOBW_T7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+2], b
+            je moveOBW_T7
+            jmp Tcorner9
+    Tcorner9:
+        checkWT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], w
+            je checkOT9
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], w
+            je checkOT9
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], w
+            je checkOT9
+            jmp Bcorner1
+        checkOT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], o
+            je checkBT9
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], o
+            je checkBT9
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], o
+            je checkBT9
+            jmp Bcorner1
+        checkBT9:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], b
+            je moveOBW_T9
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], b
+            je moveOBW_T9
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], b
+            je moveOBW_T9
+            jmp Bcorner1
+    Bcorner1:
+        checkWB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], w
+            je checkOB1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], w
+            je checkOB1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], w
+            je checkOB1
+            jmp Bcorner3
+        checkOB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], o
+            je checkBB1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], o
+            je checkBB1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], o
+            je checkBB1
+            jmp Bcorner3
+        checkBB1:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+2], b
+            je doO1
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+6], b
+            je doO1
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+8], b
+            je doO1
+            jmp Bcorner3
+        doO1:
+            call ralgoR
+            jmp moveOBW_T1
+    Bcorner3:
+        checkWB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], w
+            je checkOB3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], w
+            je checkOB3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], w
+            je checkOB3
+            jmp Bcorner7
+        checkOB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], o
+            je checkBB3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], o
+            je checkBB3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], o
+            je checkBB3
+            jmp Bcorner7
+        checkBB3:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi+8], b
+            je doO3
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+6], b
+            je doO3
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+8], b
+            je doO3
+            jmp Bcorner7
+        doO3:
+            call ralgoB
+            jmp moveOBW_T3
+    Bcorner7:
+        checkWB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], w
+            je checkOB7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], w
+            je checkOB7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], w
+            je checkOB7
+            jmp Bcorner9
+        checkOB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], o
+            je checkBB7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], o
+            je checkBB7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], o
+            je checkBB7
+            jmp Bcorner9
+        checkBB7:
+            mov esi, OFFSET sides + 9*w
+            cmp byte ptr [esi], b
+            je doO7
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+6], b
+            je doO7
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+8], b
+            je doO7
+            jmp Bcorner9
+        doO7:
+            call ralgoG
+            jmp moveOBW_T7
+    Bcorner9:
+        call ralgoO
+        jmp moveOBW_T9
+    moveOBW_T1:
+        call turnY
+        call turnY
+        rightyalgoT1:
+            call ralgoO
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+6], w
+        jne rightyalgoT1
+        jmp continue
+    moveOBW_T3:
+        call turnY
+        rightyalgoT3:
+            call ralgoO
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+6], w
+        jne rightyalgoT3
+        jmp continue
+    moveOBW_T7:
+        call turnY
+        call turnY
+        call turnY
+        rightyalgoT7:
+            call ralgoO
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+6], w
+        jne rightyalgoT7
+        jmp continue
+    moveOBW_T9:
+        rightyalgoT9:
+            call ralgoO
+        mov esi, OFFSET sides + 9*w
+        cmp byte ptr [esi+6], w
+        jne rightyalgoT9
+        jmp continue
+    continue:
+        ret
+fixOBW ENDP
+
+ralgoB proc
+    call turnR
+    call turnY
+    call turnR
+    call turnR
+    call turnR
+    call turnY
+    call turnY
+    call turnY
+	ret
+ralgoB ENDP
+
+ralgoO proc
+    call turnB
+    call turnY
+    call turnB
+    call turnB
+    call turnB
+    call turnY
+    call turnY
+    call turnY
+	ret
+ralgoO ENDP
+
+ralgoG proc
+    call turnO
+    call turnY
+    call turnO
+    call turnO
+    call turnO
+    call turnY
+    call turnY
+    call turnY
+	ret
+ralgoG ENDP
+
+ralgoR proc
+    call turnG
+    call turnY
+    call turnG
+    call turnG
+    call turnG
+    call turnY
+    call turnY
+    call turnY
+	ret
+ralgoR ENDP
+
 
 
 
