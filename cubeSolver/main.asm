@@ -1240,6 +1240,9 @@ fixBRW proc
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+8], w
         jne rightyalgoT1
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi+8], b
+        jne rightyalgoT1
         jmp continue
     moveBRW_T3:
         call turnY
@@ -1247,6 +1250,9 @@ fixBRW proc
             call ralgoB
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+8], w
+        jne rightyalgoT3
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi+8], b
         jne rightyalgoT3
         jmp continue
     moveBRW_T7:
@@ -1258,12 +1264,18 @@ fixBRW proc
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+8], w
         jne rightyalgoT7
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi+8], b
+        jne rightyalgoT7
         jmp continue
     moveBRW_T9:
         rightyalgoT9:
             call ralgoB
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+8], w
+        jne rightyalgoT9
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi+8], b
         jne rightyalgoT9
         jmp continue
     continue:
