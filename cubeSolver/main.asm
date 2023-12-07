@@ -16,6 +16,7 @@ right byte "R "
 left byte "L "
 up byte "U "
 down byte "D "
+shuffle byte 13, 10, "End of shuffling", 13, 10, 13, 10
 
 ;define colors
 w equ 0
@@ -40,19 +41,28 @@ main PROC
 	;call initCube either shuffle solved cube or generate solvable cube
 	call initCube
 
-	;call turnW
-	;call turnY
-	;call turnY
-	;call turnG
-	;call turnR
-	;call turnG
-	;call turnB
-	;call turnB
-	;call turnB
-	;call turnR
-	;call turnR
-	;call turnO
-	;call turnO
+    ;Use turn functions and turn algorithms to shuffle cube
+    call ralgoB
+    call Yfacealgo
+    call lalgoR
+    call ralgoR
+    call Yfacealgo
+    call lalgoG
+    call Yfacealgo
+    call ralgoG
+    call turnY
+    call Yfacealgo
+    call lalgoO
+    call turnB
+    call Yfacealgo
+    call ralgoO
+    call Yfacealgo
+    call lalgoB
+    call turnW
+    mov eax, filehandle
+	mov ecx, SIZEOF shuffle
+    mov edx, OFFSET shuffle
+	call WriteToFile
 	call displayCube
 	call makeDaisy
 	call displayCube
@@ -60,6 +70,16 @@ main PROC
 	call displayCube
 	call makeFLayer
 	call displayCube
+    call makeSLayer
+	call displayCube
+    call yellowPlus
+    call displayCube
+    call movTCorner
+    call displayCube
+    call fixYface
+    call displayCube
+    call finalStep
+    call displayCube
 
 	mov eax, filehandle
 	call CloseFile
@@ -879,7 +899,6 @@ solveWEdges PROC
 	cmp ebx, 4
 	je wEdgeSolved
 	call turnY
-	call displayCube
 	jmp checkForW
 
 	wEdgeSolved:
@@ -1258,7 +1277,7 @@ fixBRW proc
     moveBRW_T7:
         call turnY
         call turnY
-    call turnY
+        call turnY
         rightyalgoT7:
             call ralgoB
         mov esi, OFFSET sides + 9*w
@@ -2781,8 +2800,429 @@ ralgoR proc
 	ret
 ralgoR ENDP
 
+lalgoB proc
+    call turnO
+    call turnO
+    call turnO
+    call turnY
+    call turnY
+    call turnY
+    call turnO
+    call turnY
+    ret
+lalgoB ENDP
+
+lalgoO proc
+    call turnG
+    call turnG
+    call turnG
+    call turnY
+    call turnY
+    call turnY
+    call turnG
+    call turnY
+    ret
+lalgoO ENDP
+
+lalgoG proc
+    call turnR
+    call turnR
+    call turnR
+    call turnY
+    call turnY
+    call turnY
+    call turnR
+    call turnY
+    ret
+lalgoG ENDP
+
+lalgoR proc
+    call turnB
+    call turnB
+    call turnB
+    call turnY
+    call turnY
+    call turnY
+    call turnB
+    call turnY
+    ret
+lalgoR ENDP
 
 
+yellowPlus proc
+    mov al, 0
+    yedge1:
+        mov esi, OFFSET sides + 9*y
+        cmp byte ptr [esi+1], y
+        je inc1
+    yedge3:
+        cmp byte ptr [esi+3], y
+        je inc3
+    yedge5:
+        cmp byte ptr [esi+5], y
+        je inc5
+    yedge7:
+        cmp byte ptr [esi+7], y
+        je inc7
+        jmp casefinder
+    inc1:
+        add al, 1
+        jmp yedge3
+    inc3:
+        add al, 2
+        jmp yedge5
+    inc5:
+        add al, 4
+        jmp yedge7
+    inc7:
+        add al, 8
+    casefinder:
+        cmp al, 15
+        je case1
+        cmp al, 9
+        je case2
+        cmp al, 6
+        je case3
+        cmp al, 12
+        je case4
+        cmp al, 5
+        je case5
+        cmp al, 3
+        je case6
+        cmp al, 10
+        je case7
+        cmp al, 0
+        je case8
+    case1:;y=>1,3,5,7 (+)
+        jmp continue
+    case2:;y=>1,7 (L)
+        call turnY
+    case3:;y=>3,5 (L)
+        call turnB
+        call ralgoB
+        call turnB
+        call turnB
+        call turnB
+        jmp continue
+    case4:;y=>5,7 (r)
+        call turnG
+        call turnY
+        call turnO
+        call turnY
+        call turnY
+        call turnY
+        call turnO
+        call turnO
+        call turnO
+        call turnG
+        call turnG
+        call turnG
+        jmp continue
+    case5:;y=>1,5 (r)
+        call turnY
+    case6:;y=>1,3 (r)
+        call turnY
+    case7:;y=>3,7 (r)
+        call turnY
+        call case4
+    case8:;y=>4(always) (*) 
+        call turnB
+        call ralgoB
+        call turnB
+        call turnB
+        call turnB
+        call case4
+    continue:
+        ret
+yellowPlus ENDP
+
+movTCorner proc
+    dofirst: ;;BOY: 8, BRY: 6, GRY: 8, OGY: 10
+        mov esi, OFFSET sides + 9*y
+        cmp byte ptr [esi+6], b
+        je nextcolor
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi], b
+        je nextcolor
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+2], b
+        je nextcolor
+        call turnY
+        jmp dofirst
+        nextcolor:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+6], o
+            je nextsteps
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi], o
+            je nextsteps
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+2], o
+            je nextsteps
+            call turnY
+            jmp dofirst
+    nextsteps: ;;BOY now in [esi+6]
+        ;;assume BRY in [esi]
+        mov al, 0
+        mov esi, OFFSET sides + 9*y
+        add al, byte ptr [esi]
+        mov esi, OFFSET sides + 9*o
+        add al, byte ptr [esi]
+        mov esi, OFFSET sides + 9*g
+        add al, byte ptr [esi+2]
+        cmp al, 6
+        je doublerotBR
+        ;;assume BRY in [esi+2]
+        mov al, 0
+        mov esi, OFFSET sides + 9*y
+        add al, byte ptr [esi+2]
+        mov esi, OFFSET sides + 9*g
+        add al, byte ptr [esi]
+        mov esi, OFFSET sides + 9*r
+        add al, byte ptr [esi+2]
+        cmp al, 6
+        je singlerotBR
+    ;;BRY in [esi+8], so check GRY and GOY
+    nextstepG:
+        mov al, 0
+        mov esi, OFFSET sides + 9*y
+        add al, byte ptr [esi+2]
+        mov esi, OFFSET sides + 9*g
+        add al, byte ptr [esi]
+        mov esi, OFFSET sides + 9*r
+        add al, byte ptr [esi+2]
+        cmp al, 8
+        je continue
+        call ralgoR
+        call ralgoR
+        call ralgoR
+        call lalgoG
+        call lalgoG
+        call turnR
+        call turnR
+        call turnR
+        call turnY
+        call turnY
+        call turnY
+        call turnR
+        jmp continue
+    doublerotBR:
+        mov al, 0
+        mov esi, OFFSET sides + 9*y
+        add al, byte ptr [esi+2]
+        mov esi, OFFSET sides + 9*g
+        add al, byte ptr [esi]
+        mov esi, OFFSET sides + 9*r
+        add al, byte ptr [esi+2]
+        cmp al, 10
+        je option1
+        jmp option2
+        option1: ;;BRY in [esi], GOY in [esi+2], GRY in [esi+8]
+            call ralgoR
+            call ralgoR
+            call ralgoR
+            call lalgoG
+            call lalgoG
+            call turnR
+            call turnR
+            call turnR
+            call turnY
+            call turnY
+            call turnY
+            call turnR ;; swap BRY and OGY
+            call ralgoB
+            call ralgoB
+            call ralgoB
+            call lalgoR
+            call lalgoR
+            call turnB
+            call turnB
+            call turnB
+            call turnY
+            call turnY
+            call turnY
+            call turnB ;;swap BRY and GRY
+            jmp continue 
+        option2: ;;BRY in [esi], GOY in [esi+8], GRY in [esi+2]
+            call ralgoB
+            call ralgoB
+            call ralgoB
+            call lalgoR
+            call lalgoR
+            call turnB
+            call turnB
+            call turnB
+            call turnY
+            call turnY
+            call turnY
+            call turnB ;; swap GOY and GRY
+            jmp option1
+    singlerotBR: ;; BRY in [esi+2]
+        call ralgoB
+        call ralgoB
+        call ralgoB
+        call lalgoR
+        call lalgoR
+        call turnB
+        call turnB
+        call turnB
+        call turnY
+        call turnY
+        call turnY
+        call turnB ;;swap BRY and [esi+8]
+        jmp nextstepG ;;this should swap [esi] and [esi+8] if necessary
+    continue:
+        ret
+movTCorner ENDP
+
+Yfacealgo proc
+    call turnO
+    call turnW
+    call turnO
+    call turnO
+    call turnO
+    call turnW
+    call turnW
+    call turnW
+    ret
+Yfacealgo ENDP
+
+fixYface proc
+    mov bl, 0
+    findyellow:
+        mov al, 0
+        mov esi, OFFSET sides +9*y
+        add al, [esi]
+        add al, [esi+2]
+        add al, [esi+6]
+        add al, [esi+8]
+        cmp al, 4
+        je continue
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+2], y
+        je fixYv2
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi], y
+        je fixYv4
+        call turnY
+        call turnY
+        call turnY
+        inc bl
+        jmp findyellow
+    fixYv4:
+        call Yfacealgo
+        call Yfacealgo
+    fixYv2:
+        call Yfacealgo
+        call Yfacealgo
+        call turnY
+        call turnY
+        call turnY
+        inc bl
+        jmp findyellow
+    continue:
+        l1:
+            cmp bl, 4
+            jae finishproc
+            call turnY
+            call turnY
+            call turnY
+            inc bl
+            jmp l1
+        finishproc:
+            ret
+fixYface ENDP
+
+finalstep proc
+    checkalldone:
+        bdone:
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+1], b
+            je rdone
+            jne bside
+        rdone:
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+1], r
+            je continue
+    bside:
+        mov esi, OFFSET sides + 9*b
+        cmp byte ptr [esi+1], b
+        jne rside
+        je fixcubeB
+    rside:
+        mov esi, OFFSET sides + 9*r
+        cmp byte ptr [esi+1], r
+        jne gside
+        je fixcubeR
+    gside:
+        mov esi, OFFSET sides + 9*g
+        cmp byte ptr [esi+1], g
+        jne oside
+        je fixcubeG
+    oside:
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+1], o
+        jne fixcubeB
+        je fixcubeO
+    fixcubeB:
+        call ralgoB
+        call lalgoB
+        call ralgoB
+        call ralgoB
+        call ralgoB
+        call ralgoB
+        call ralgoB
+        call lalgoB
+        call lalgoB
+        call lalgoB
+        call lalgoB
+        call lalgoB
+        jmp checkalldone
+    fixcubeR:
+        call ralgoR
+        call lalgoR
+        call ralgoR
+        call ralgoR
+        call ralgoR
+        call ralgoR
+        call ralgoR
+        call lalgoR
+        call lalgoR
+        call lalgoR
+        call lalgoR
+        call lalgoR
+        jmp checkalldone
+    fixcubeO:
+        call ralgoO
+        call lalgoO
+        call ralgoO
+        call ralgoO
+        call ralgoO
+        call ralgoO
+        call ralgoO
+        call lalgoO
+        call lalgoO
+        call lalgoO
+        call lalgoO
+        call lalgoO
+        jmp checkalldone
+    fixcubeG:
+        call ralgoG
+        call lalgoG
+        call ralgoG
+        call ralgoG
+        call ralgoG
+        call ralgoG
+        call ralgoG
+        call lalgoG
+        call lalgoG
+        call lalgoG
+        call lalgoG
+        call lalgoG
+        jmp checkalldone
+    continue:
+        ret
+finalstep ENDP
 
 ; determine colors on side of desired color, turn both of those
 turnMiddle PROC
