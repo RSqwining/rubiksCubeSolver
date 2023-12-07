@@ -2185,6 +2185,554 @@ fixOBW proc
         ret
 fixOBW ENDP
 
+makeSLayer proc
+    start:
+        BRedge:
+            BRstep1:
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+5], b
+                je BRstep2
+                jmp Tedge2
+            BRstep2:
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+3], r
+                je RGedge
+                jmp Tedge2
+        RGedge:
+            RGstep1:
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+5], r
+                je RGstep2
+                jmp Tedge2
+            RGstep2:
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+3], g
+                je GOedge
+                jmp Tedge2
+        GOedge:
+            GOstep1:
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+5], g
+                je GOstep2
+                jmp Tedge2
+            GOstep2:
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+3], o
+                je OBedge
+                jmp Tedge2
+        OBedge:
+            OBstep1:
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+5], o
+                je OBstep2
+                jmp Tedge2
+            OBstep2:
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+3], b
+                je continue
+                jmp Tedge2
+    Tedge2:
+        yellow2:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+1], y
+            jne color2
+            jmp Tedge4
+        color2:
+            mov esi, OFFSET sides + 9*g
+            cmp byte ptr [esi+1], y
+            jne foundedge2
+            jmp Tedge4
+    Tedge4:
+        yellow4:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+3], y
+            jne color4
+            jmp Tedge6
+        color4:
+            mov esi, OFFSET sides + 9*o
+            cmp byte ptr [esi+1], y
+            jne foundedge4
+            jmp Tedge6
+    Tedge6:
+        yellow6:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+5], y
+            jne color6
+            jmp Tedge8
+        color6:
+            mov esi, OFFSET sides + 9*r
+            cmp byte ptr [esi+1], y
+            jne foundedge6
+            jmp Tedge8
+    Tedge8:
+        yellow8:
+            mov esi, OFFSET sides + 9*y
+            cmp byte ptr [esi+7], y
+            jne color8
+            jmp popedgeup
+        color8:
+            mov esi, OFFSET sides + 9*b
+            cmp byte ptr [esi+1], y
+            jne foundedge8
+            jmp popedgeup
+    foundedge2:
+        checkBRO2:
+            checkB2:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+1], b
+                je checkRB2
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+1], b
+                je checkRB2
+                jmp checkGRO2
+            checkRB2:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+1], r
+                je movRTBB2
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+1], r
+                je movRBBT2
+            checkOB2:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+1], o
+                je movOTBB2
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+1], o
+                je movOBBT2
+            movRTBB2:
+                call turnY
+                call turnY
+                call turnY
+                call ralgoB
+                call lalgoR
+                inc al
+                jmp start
+            movRBBT2:
+                call lalgoR
+                call ralgoB
+                inc al
+                jmp start
+            movOTBB2:
+                call turnY
+                call lalgoB
+                call ralgoO
+                inc al
+                jmp start
+            movOBBT2:
+                call ralgoO
+                call lalgoB
+                inc al
+                jmp start
+        checkGRO2:
+            checkG2:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+1], g
+                je checkRG2
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+1], g
+                je checkRG2
+            checkRG2:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+1], r
+                je movRTGB2
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+1], r
+                je movRBGT2
+            checkOG2:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+1], o
+                je movOTGB2
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+1], o
+                je movOBGT2
+            movRTGB2:
+                call turnY
+                call turnY
+                call turnY
+                call lalgoG
+                call ralgoR
+                inc al
+                jmp start
+            movRBGT2:
+                call turnY
+                call turnY
+                call ralgoR
+                call lalgoG
+                inc al
+                jmp start
+            movOTGB2:
+                call turnY
+                call ralgoG
+                call lalgoO
+                inc al
+                jmp start
+            movOBGT2:
+                call turnY
+                call turnY
+                call lalgoO
+                call ralgoG
+                inc al
+                jmp start
+    foundedge4:
+        checkBRO4:
+            checkB4:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+3], b
+                je checkRB4
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+1], b
+                je checkRB4
+                jmp checkGRO4
+            checkRB4:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+3], r
+                je movRTBB4
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+1], r
+                je movRBBT4
+            checkOB4:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+3], o
+                je movOTBB4
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+1], o
+                je movOBBT4
+            movRTBB4:
+                call ralgoB
+                call lalgoR
+                inc al
+                jmp start
+            movRBBT4:
+                call turnY
+                call lalgoR
+                call ralgoB
+                inc al
+                jmp start
+            movOTBB4:
+                call turnY
+                call turnY
+                call lalgoB
+                call ralgoO
+                inc al
+                jmp start
+            movOBBT4:
+                call turnY
+                call ralgoO
+                call lalgoB
+                inc al
+                jmp start
+        checkGRO4:
+            checkG4:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+3], g
+                je checkRG4
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+1], g
+                je checkRG4
+            checkRG4:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+3], r
+                je movRTGB4
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+1], r
+                je movRBGT4
+            checkOG4:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+3], o
+                je movOTGB4
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+1], o
+                je movOBGT4
+            movRTGB4:
+                call lalgoG
+                call ralgoR
+                inc al
+                jmp start
+            movRBGT4:
+                call turnY
+                call turnY
+                call turnY
+                call ralgoR
+                call lalgoG
+                inc al
+                jmp start
+            movOTGB4:
+                call turnY
+                call turnY
+                call ralgoG
+                call lalgoO
+                inc al
+                jmp start
+            movOBGT4:
+                call turnY
+                call turnY
+                call turnY
+                call lalgoO
+                call ralgoG
+                inc al
+                jmp start
+    foundedge6:
+        checkBRO6:
+            checkB6:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+5], b
+                je checkRB6
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+1], b
+                je checkRB6
+                jmp checkGRO4
+            checkRB6:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+5], r
+                je movRTBB6
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+1], r
+                je movRBBT6
+            checkOB6:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+5], o
+                je movOTBB6
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+1], o
+                je movOBBT6
+            movRTBB6:
+                call turnY
+                call turnY
+                call ralgoB
+                call lalgoR
+                inc al
+                jmp start
+            movRBBT6:
+                call turnY
+                call turnY
+                call turnY
+                call lalgoR
+                call ralgoB
+                inc al
+                jmp start
+            movOTBB6:
+                call lalgoB
+                call ralgoO
+                inc al
+                jmp start
+            movOBBT6:
+                call turnY
+                call turnY
+                call turnY
+                call ralgoO
+                call lalgoB
+                inc al
+                jmp start
+        checkGRO6:
+            checkG6:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+5], g
+                je checkRG6
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+1], g
+                je checkRG6
+            checkRG6:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+5], r
+                je movRTGB6
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+1], r
+                je movRBGT6
+            checkOG6:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+5], o
+                je movOTGB6
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+1], o
+                je movOBGT6
+            movRTGB6:
+                call turnY
+                call turnY
+                call lalgoG
+                call ralgoR
+                inc al
+                jmp start
+            movRBGT6:
+                call turnY
+                call ralgoR
+                call lalgoG
+                inc al
+                jmp start
+            movOTGB6:
+                call ralgoG
+                call lalgoO
+                inc al
+                jmp start
+            movOBGT6:
+                call turnY
+                call lalgoO
+                call ralgoG
+                inc al
+                jmp start
+    foundedge8:
+        checkBRO8:
+            checkB8:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+7], b
+                je checkRB8
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+1], b
+                je checkRB8
+                jmp checkGRO8
+            checkRB8:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+7], r
+                je movRTBB8
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+1], r
+                je movRBBT8
+            checkOB8:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+7], o
+                je movOTBB8
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+1], o
+                je movOBBT8
+            movRTBB8:
+                call turnY
+                call ralgoB
+                call lalgoR
+                inc al
+                jmp start
+            movRBBT8:
+                call turnY
+                call turnY
+                call lalgoR
+                call ralgoB
+                inc al
+                jmp start
+            movOTBB8:
+                call turnY
+                call turnY
+                call turnY
+                call lalgoB
+                call ralgoO
+                inc al
+                jmp start
+            movOBBT8:
+                call turnY
+                call turnY
+                call ralgoO
+                call lalgoB
+                inc al
+                jmp start
+        checkGRO8:
+            checkG8:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+7], g
+                je checkRG8
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+1], g
+                je checkRG8
+            checkRG8:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+7], r
+                je movRTGB8
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+1], r
+                je movRBGT8
+            checkOG8:
+                mov esi, OFFSET sides + 9*y
+                cmp byte ptr [esi+7], o
+                je movOTGB8
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+1], o
+                je movOBGT8
+            movRTGB8:
+                call turnY
+                call lalgoG
+                call ralgoR
+                inc al
+                jmp start
+            movRBGT8:
+                call ralgoR
+                call lalgoG
+                inc al
+                jmp start
+            movOTGB8:
+                call turnY
+                call turnY
+                call turnY
+                call ralgoG
+                call lalgoO
+                inc al
+                jmp start
+            movOBGT8:
+                call lalgoO
+                call ralgoG
+                inc al
+                jmp start
+    popedgeup:
+        BRedgecheck:
+            BRstep1check:
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+5], b
+                je BRstep2check
+                jmp popBRedge
+            BRstep2check:
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+3], r
+                je RGedgecheck
+                jmp popBRedge
+        RGedgecheck:
+            RGstep1check:
+                mov esi, OFFSET sides + 9*r
+                cmp byte ptr [esi+5], r
+                je RGstep2check
+                jmp popRGedge
+            RGstep2check:
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+3], g
+                je GOedgecheck
+                jmp popRGedge
+        GOedgecheck:
+            GOstep1check:
+                mov esi, OFFSET sides + 9*g
+                cmp byte ptr [esi+5], g
+                je GOstep2check
+                jmp popGOedge
+            GOstep2check:
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+3], o
+                je OBedgecheck
+                jmp popGOedge
+        OBedgecheck:
+            OBstep1check:
+                mov esi, OFFSET sides + 9*o
+                cmp byte ptr [esi+5], o
+                je OBstep2check
+                jmp popOBedge
+            OBstep2check:
+                mov esi, OFFSET sides + 9*b
+                cmp byte ptr [esi+3], b
+                je start ;;if this ever executes then some issue
+                jmp popOBedge
+        popBRedge:
+            call ralgoB
+            call lalgoR
+            jmp start
+        popRGedge:
+            call ralgoR
+            call lalgoG
+            jmp start
+        popGOedge:
+            call ralgoG
+            call lalgoO
+            jmp start
+        popOBedge:
+            call ralgoO
+            call lalgoB
+            jmp start
+    continue:
+        ret
+makeSLayer ENDP
+
+
 ralgoB proc
     call turnR
     call turnY
