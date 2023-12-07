@@ -214,7 +214,41 @@ push edx
 
 mov edx, OFFSET down
 mov esi, OFFSET sides
-call turnClock
+push esi
+push eax
+push ebx
+
+;write move to file
+push eax
+push ecx
+mov eax, filehandle
+mov ecx, MOVESIZE
+call WriteToFile
+pop ecx
+pop eax
+
+mov al, [esi]; move corners to new locations 0->6, 6->8, 8->2, 2->0
+mov bl, [esi + 6]
+mov [esi + 6], al
+mov al, [esi + 8]
+mov [esi + 8], bl
+mov bl, [esi + 2]
+mov [esi + 2], al
+mov [esi], bl
+
+mov al, [esi + 5]; move edges to new locations 5->1, 1->3,  3->7, 7->5,
+mov bl, [esi + 1]
+mov [esi + 1], al
+mov al, [esi + 3]
+mov [esi + 3], bl
+mov bl, [esi + 7]
+mov [esi + 7], al
+mov [esi+5], bl
+
+mov al, [esi + 5]
+pop ebx
+pop eax
+pop esi
 
 mov esi, OFFSET sides + 9 * b + 6; set esi to point to the 7th element in blue array
 mov edi, OFFSET sides + 9 * r + 6; set edi to point to the 7th element in red array
