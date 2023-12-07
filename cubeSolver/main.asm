@@ -1842,6 +1842,9 @@ fixGOW proc
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi], w
         jne rightyalgoT1
+        mov esi, OFFSET sides + 9*g
+        cmp byte ptr [esi+8], g
+        jne rightyalgoT1
         jmp continue
     moveGOW_T3:
         call turnY
@@ -1849,6 +1852,9 @@ fixGOW proc
             call ralgoG
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi], w
+        jne rightyalgoT3
+        mov esi, OFFSET sides + 9*g
+        cmp byte ptr [esi+8], g
         jne rightyalgoT3
         jmp continue
     moveGOW_T7:
@@ -1860,12 +1866,18 @@ fixGOW proc
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi], w
         jne rightyalgoT7
+        mov esi, OFFSET sides + 9*g
+        cmp byte ptr [esi+8], g
+        jne rightyalgoT7
         jmp continue
     moveGOW_T9:
         rightyalgoT9:
             call ralgoG
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi], w
+        jne rightyalgoT9
+        mov esi, OFFSET sides + 9*g
+        cmp byte ptr [esi+8], g
         jne rightyalgoT9
         jmp continue
     continue:
@@ -2131,6 +2143,9 @@ fixOBW proc
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+6], w
         jne rightyalgoT1
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+8], o
+        jne rightyalgoT1
         jmp continue
     moveOBW_T3:
         call turnY
@@ -2138,6 +2153,9 @@ fixOBW proc
             call ralgoO
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+6], w
+        jne rightyalgoT3
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+8], o
         jne rightyalgoT3
         jmp continue
     moveOBW_T7:
@@ -2149,12 +2167,18 @@ fixOBW proc
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+6], w
         jne rightyalgoT7
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+8], o
+        jne rightyalgoT7
         jmp continue
     moveOBW_T9:
         rightyalgoT9:
             call ralgoO
         mov esi, OFFSET sides + 9*w
         cmp byte ptr [esi+6], w
+        jne rightyalgoT9
+        mov esi, OFFSET sides + 9*o
+        cmp byte ptr [esi+8], o
         jne rightyalgoT9
         jmp continue
     continue:
